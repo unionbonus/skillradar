@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: sqlite:////tmp/skillradar-test.db
+      SECRET_KEY: test-secret-key-please-change-32b
+      ENCRYPTION_KEY: test-encryption-key
+      SKILLRADAR_DISABLE_SCHEDULER: "1"
+      CLONE_DIR: /tmp/clones
+      CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "18001:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health')"]
+      interval: 3s
+      timeout: 3s
+      retries: 20

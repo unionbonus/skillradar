@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sr-canvas: #07111f;
+  --sr-surface: #0c1b2e;
+  --sr-elevated: #12243c;
+  --sr-line: #1e3a5c;
+  --sr-accent: #3ec6ff;
+  --sr-text: #e8f1fa;
+  --sr-muted: #8aa0b8;
+  --sr-radius: 20px;
+}
+
+html, body { min-height: 100%; }
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(62,198,255,0.12), transparent 55%),
+    radial-gradient(800px 400px at -10% 110%, rgba(93,255,196,0.08), transparent 50%),
+    var(--sr-canvas);
+  color: var(--sr-text);
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, .display { font-family: Outfit, ui-sans-serif, system-ui, sans-serif; }
+a { color: var(--sr-accent); }
+label { display: block; font-size: 13px; color: var(--sr-muted); margin-bottom: 6px; }
+input, textarea, select {
+  background: rgba(18,36,60,0.88);
+  border: 1px solid var(--sr-line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: inherit;
+  width: 100%;
+  min-height: 44px;
+  outline: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: rgba(62,198,255,0.7);
+  box-shadow: 0 0 0 3px rgba(62,198,255,0.15);
+}
+button {
+  background: linear-gradient(180deg, #2eb4ee, #1383b8);
+  color: white;
+  border-radius: 14px;
+  padding: 11px 16px;
+  min-height: 44px;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(19,131,184,0.28);
+}
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--sr-line);
+  box-shadow: none;
+  color: var(--sr-text);
+}
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+.sr-card {
+  background: linear-gradient(180deg, rgba(18,36,60,0.92), rgba(12,27,46,0.92));
+  border: 1px solid var(--sr-line);
+  border-radius: var(--sr-radius);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3 { color: white; margin: 1.1em 0 0.4em; }
+.markdown-body p, .markdown-body li { color: #c9d8e8; line-height: 1.65; }
+.markdown-body table { width: 100%; font-size: 13px; border-collapse: collapse; margin: 12px 0; }
+.markdown-body th, .markdown-body td { border: 1px solid var(--sr-line); padding: 8px; }
+.markdown-body a { word-break: break-all; }
+
+@media print {
+  header, nav, .no-print { display: none !important; }
+  body { background: white; color: #111; }
+  main { max-width: none; padding: 0; }
+  .markdown-body, .markdown-body p, .markdown-body li { color: #111; }
+}
+
+@media (max-width: 767px) {
+  .sr-main { padding-bottom: 96px; }
+}

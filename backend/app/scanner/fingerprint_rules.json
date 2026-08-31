@@ -1,0 +1,17 @@
+{
+  "claude_skill": {
+    "files": ["SKILL.md", "skill.yaml"],
+    "dirs": [".claude/skills/", "skills/"],
+    "parser": "ClaudeSkillParser"
+  },
+  "mcp_server": {
+    "files": ["mcp.json", "server.py", "server.ts", "package.json"],
+    "dirs": ["src/", "tools/"],
+    "parser": "MCPServerParser"
+  },
+  "langchain_tool": {
+    "files": ["langchain.json", "agent.yaml"],
+    "dirs": ["tools/", "agents/", "chains/"],
+    "parser": "LangChainParser"
+  }
+}
