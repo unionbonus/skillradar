@@ -1,0 +1,11 @@
+__pycache__
+.pytest_cache
+.coverage
+htmlcov
+*.db
+*.sqlite
+tests
+_clones
+_test.db
+_sandbox.db
+*.egg-info

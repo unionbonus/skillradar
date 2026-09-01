@@ -1,0 +1,55 @@
+{
+  "name": "skillradar",
+  "private": true,
+  "version": "0.5.0",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "electron": "electron .",
+    "electron:dev": "electron .",
+    "electron:build": "npm run build && electron-builder"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.4.4",
+    "next": "^14.2.21",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  },
+  "build": {
+    "appId": "com.skillradar.desktop",
+    "productName": "SkillRadar",
+    "directories": { "output": "release" },
+    "files": ["electron/**/*", "package.json"],
+    "extraResources": [
+      { "from": "../backend/app", "to": "backend/app" },
+      { "from": "../backend/requirements.txt", "to": "backend/requirements.txt" },
+      { "from": ".next/standalone", "to": "next" },
+      { "from": ".next/static", "to": "next/.next/static" },
+      { "from": "public", "to": "next/public" },
+      { "from": "../用户手册.md", "to": "用户手册.md" }
+    ],
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Development",
+      "artifactName": "SkillRadar-${version}-linux.${ext}"
+    },
+    "win": {
+      "target": ["nsis"],
+      "artifactName": "SkillRadar-${version}-win.${ext}"
+    }
+  }
+}

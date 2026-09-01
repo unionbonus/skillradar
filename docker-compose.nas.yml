@@ -1,0 +1,60 @@
+# SkillRadar NAS 轻量栈：SQLite + 内存图，不含 Postgres/Redis/Neo4j（适配极空间内存）
+# 用法（在仓库根目录）：
+#   DATA_DIR=./data HOST_PORT=13000 BACKEND_PORT=18000 docker compose -f docker-compose.nas.yml up -d --build
+
+services:
+  backend:
+    image: skillradar-backend:0.5.0
+    build: ./backend
+    container_name: skillradar-backend
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      APP_VERSION: "0.5.0"
+      DATABASE_URL: sqlite:////data/skillradar.db
+      SECRET_KEY: ${SECRET_KEY:-change-me-to-a-32-byte-or-longer-random-string}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      GITHUB_TOKENS: ${GITHUB_TOKENS:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o}
+      NEO4J_URI: ""
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:13000,http://127.0.0.1:13000}
+      CLONE_DIR: /data/clones
+      PYTHONPATH: /app
+    volumes:
+      - ${DATA_DIR:-./data}:/data
+    ports:
+      - "${BACKEND_PORT:-18000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+    networks:
+      skillradar:
+        aliases:
+          - backend
+
+  frontend:
+    image: skillradar-frontend:0.5.0
+    build:
+      context: ./frontend
+      args:
+        BACKEND_URL: http://backend:8000
+    container_name: skillradar-frontend
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      BACKEND_URL: http://backend:8000
+    ports:
+      - "${HOST_PORT:-13000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - skillradar
+
+networks:
+  skillradar:
+    name: skillradar

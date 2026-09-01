@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=SkillRadar 情报雷达
+Comment=SkillRadar v0.3 Electron 桌面应用
+Exec=/bin/bash "/home/unionbonus/Projects/skillradar/启动SkillRadar.sh"
+Path=/home/unionbonus/Projects/skillradar
+Terminal=false
+Categories=Development;Network;
+StartupNotify=true
