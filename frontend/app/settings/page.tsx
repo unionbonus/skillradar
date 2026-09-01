@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { Shell } from '@/components/Shell';
 import { desktop } from '@/lib/desktop';
 import { api } from '@/lib/api';

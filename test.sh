@@ -23,10 +23,13 @@ echo "==> unit tests + coverage"
 "$PYTHON" -m pytest
 
 echo "==> start API on :$PORT"
-rm -f "$ROOT/backend/_sandbox.db"
+pkill -f "uvicorn app.main:app --host 127.0.0.1 --port ${PORT}" 2>/dev/null || true
+sleep 0.3
+rm -f "$ROOT/backend/_sandbox.db" /tmp/skillradar-test.log
+: > /tmp/skillradar-test.log
 "$PYTHON" -m uvicorn app.main:app --host 127.0.0.1 --port "$PORT" > /tmp/skillradar-test.log 2>&1 &
-PID=$!
-cleanup() { kill "$PID" 2>/dev/null || true; }
+UV_PID=$!
+cleanup() { kill "$UV_PID" 2>/dev/null || true; }
 trap cleanup EXIT
 
 ok=0
@@ -54,6 +57,11 @@ grep -q '"backend"' /tmp/sr-health.json
 reg=$(curl -sS -X POST "http://127.0.0.1:${PORT}/api/v1/auth/register" \
   -H 'Content-Type: application/json' \
   -d '{"email":"qa@example.com","password":"password1"}')
+if ! echo "$reg" | grep -q access_token; then
+  reg=$(curl -sS -X POST "http://127.0.0.1:${PORT}/api/v1/auth/login" \
+    -H 'Content-Type: application/json' \
+    -d '{"email":"qa@example.com","password":"password1"}')
+fi
 echo "$reg" | grep -q access_token
 TOKEN=$(python3 -c "import json,sys; print(json.load(open('/dev/stdin'))['data']['access_token'])" <<<"$reg")
 
@@ -76,10 +84,10 @@ SEARCH=$(curl -fsS "http://127.0.0.1:${PORT}/api/v1/search?q=web-search" -H "Aut
 echo "$SEARCH" | grep -q '"items"'
 
 REPOS=$(curl -fsS "http://127.0.0.1:${PORT}/api/v1/repos" -H "Authorization: Bearer $TOKEN")
-PID=$(python3 -c "import json,sys; print(json.load(sys.stdin)['data']['items'][0]['id'])" <<<"$REPOS")
+PLUGIN_ID=$(python3 -c "import json,sys; print(json.load(sys.stdin)['data']['items'][0]['id'])" <<<"$REPOS")
 curl -sS -X POST "http://127.0.0.1:${PORT}/api/v1/reports/generate" \
   -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
-  -d "{\"plugin_id\": $PID}" | grep -q '"title"'
+  -d "{\"plugin_id\": $PLUGIN_ID}" | grep -q '"title"'
 curl -fsS "http://127.0.0.1:${PORT}/api/v1/reports" -H "Authorization: Bearer $TOKEN" | grep -q 商业拆解
 
 test -f "$ROOT/frontend/electron/main.cjs"

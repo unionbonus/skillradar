@@ -34,6 +34,17 @@ echo "==> docker 构建并启动 SkillRadar（$APP）"
 export DATA_DIR="$DATA"
 export HOST_PORT BACKEND_PORT SECRET_KEY CORS_ORIGINS COMPOSE_NAME
 
+# 旧版 skillradar-go:0.4 占用 13000；v0.5 Next 前端需要同一端口。
+echo "==> 释放 ${HOST_PORT}/${BACKEND_PORT}（停掉旧 skillradar-go 与残留容器）"
+dock rm -f skillradar-go >/dev/null 2>&1 || true
+for port in "$HOST_PORT" "$BACKEND_PORT"; do
+  ids="$(dock ps -q --filter "publish=${port}" 2>/dev/null || true)"
+  if [[ -n "${ids}" ]]; then
+    echo "    停止占用 ${port} 的容器: ${ids}"
+    dock rm -f ${ids} || true
+  fi
+done
+
 if dock compose version >/dev/null 2>&1; then
   dock compose -f docker-compose.nas.yml -p "$COMPOSE_NAME" up -d --build
 elif command -v docker-compose >/dev/null 2>&1; then
@@ -49,11 +60,13 @@ else
     --memory 512m \
     -p "${BACKEND_PORT}:8000" \
     -v "$DATA:/data" \
+    -e APP_VERSION=0.5.0 \
     -e DATABASE_URL=sqlite:////data/skillradar.db \
     -e SECRET_KEY="$SECRET_KEY" \
     -e NEO4J_URI= \
     -e CORS_ORIGINS="$CORS_ORIGINS" \
     -e CLONE_DIR=/data/clones \
+    -e OBJECT_DIR=/data/objects \
     -e PYTHONPATH=/app \
     skillradar-backend:0.5.0
   for _ in $(seq 1 40); do
@@ -62,12 +75,16 @@ else
     fi
     sleep 2
   done
-  dock run -d --name skillradar-frontend --restart unless-stopped \
+  if ! dock run -d --name skillradar-frontend --restart unless-stopped \
     --network skillradar \
     --memory 512m \
     -p "${HOST_PORT}:3000" \
     -e BACKEND_URL=http://backend:8000 \
-    skillradar-frontend:0.5.0
+    skillradar-frontend:0.5.0; then
+    echo "ERROR: frontend 启动失败，inspect:" >&2
+    dock inspect skillradar-frontend --format '{{.State.Error}}' >&2 || true
+    exit 1
+  fi
 fi
 
 echo "==> 等待健康检查"
@@ -86,4 +103,18 @@ if [[ "$ok" != 1 ]]; then
 fi
 curl -fsS "http://127.0.0.1:${BACKEND_PORT}/api/v1/health" || true
 echo
+front_ok=0
+for _ in $(seq 1 20); do
+  if curl -fsS "http://127.0.0.1:${HOST_PORT}/" >/dev/null 2>&1; then
+    front_ok=1
+    break
+  fi
+  sleep 2
+done
+if [[ "$front_ok" != 1 ]]; then
+  echo "WARN: 前端 http://127.0.0.1:${HOST_PORT}/ 未响应" >&2
+  dock inspect skillradar-frontend --format '{{.State.Status}} {{.State.Error}}' >&2 || true
+  dock logs --tail 40 skillradar-frontend >&2 || true
+  exit 1
+fi
 echo "NAS 前端端口 ${HOST_PORT}  后端端口 ${BACKEND_PORT}"
