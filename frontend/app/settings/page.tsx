@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Shell } from '@/components/Shell';
 import { desktop } from '@/lib/desktop';
+import { api } from '@/lib/api';
 import { ChannelLinkPanel } from '@/components/ChannelLink';
 
 type Health = {

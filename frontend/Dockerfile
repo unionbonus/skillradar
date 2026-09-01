@@ -11,6 +11,7 @@ COPY . .
 ARG BACKEND_URL=http://backend:8000
 ENV BACKEND_URL=$BACKEND_URL
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS=--max-old-space-size=768
 RUN mkdir -p public && npm run build
 
 FROM node:20-alpine AS runner
