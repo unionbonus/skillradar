@@ -8,7 +8,7 @@ export default function HelpPage() {
   const desk = desktop();
   return (
     <Shell>
-      <h1 className="mb-2 text-[20px] font-semibold">SkillRadar v0.5 使用手册</h1>
+      <h1 className="mb-2 text-[20px] font-semibold">SkillRadar v0.5.2 使用手册</h1>
       <p className="mb-6 max-w-2xl text-sm text-muted">
         AI 基础插件商业情报平台：多渠道扫描、技术深度拆解、市场调研、商业报告库、飞书/企微/邮件订阅。桌面窗口菜单可跳转雷达 / 订阅 / 设置。
       </p>
@@ -16,9 +16,9 @@ export default function HelpPage() {
         <li>
           <Link href="/login">登录或注册</Link> 后打开雷达，扫描 GitHub 或其他渠道。
         </li>
-        <li>点亮的插件进入详情：架构图、深度分析、动机、市场调研，再生成商业拆解报告。</li>
+        <li>点亮的 PPI 接触点进入详情：架构图、深度分析、动机、市场调研，再生成商业拆解报告。</li>
         <li>报告库可全文/语义检索；订阅页配置飞书 / 企微 / 邮件。</li>
-        <li>设置页集中管理大模型与渠道，密钥 AES-256-GCM 加密。</li>
+        <li>设置页扫码绑定飞书/企微（头像绿钩 = 已连接，默认长连接），大模型密钥 AES-256-GCM 加密。</li>
       </ol>
       <div className="flex flex-wrap gap-2">
         <Link href="/radar">

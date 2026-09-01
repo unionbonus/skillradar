@@ -379,17 +379,18 @@ export default function RadarPage() {
               nodes={radarNodes}
               edges={radarEdges}
               selectedId={selected}
+              scanning={scanning}
               onSelect={(n) => setSelected(n.id)}
             />
             {!radarNodes.length && (
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <p className="rounded-xl border border-line bg-[#06101c]/80 px-4 py-3 text-sm text-slate-300">
-                  雷达还是空的。扫描一个关键词，命中的仓库会出现在环上。
+              <div className="pointer-events-none absolute left-1/2 top-[56%] -translate-x-1/2">
+                <p className="rounded border border-line/80 bg-[#070b10]/70 px-3 py-1 font-mono text-[11px] tracking-wide text-muted">
+                  NO CONTACTS · AWAIT SCAN
                 </p>
               </div>
             )}
             {selectedRepo && (
-              <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-line bg-[#0b1a2c]/95 p-3 shadow-lg">
+                  <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-line bg-[#070b10]/95 p-3 shadow-lg">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <strong>{selectedRepo.full_name}</strong>
@@ -422,8 +423,8 @@ export default function RadarPage() {
                 {f.label}
               </button>
             ))}
-            <span className="ml-auto text-[11px] text-slate-500">
-              Claude 青 · MCP 绿 · LangChain 金 · 连线 = 同类相关
+            <span className="ml-auto text-[11px] font-mono text-slate-500">
+              PPI 扫描线 · Skill 绿 · MCP 蓝 · 选中为 IFF 十字
             </span>
           </div>
           <div className="mt-3 grid gap-2">

@@ -52,15 +52,15 @@ elif command -v docker-compose >/dev/null 2>&1; then
 else
   echo "==> 无 compose，改用 docker build / run"
   dock network create skillradar >/dev/null 2>&1 || true
-  dock build -t skillradar-backend:0.5.0 "$APP/backend"
-  dock build --build-arg BACKEND_URL=http://backend:8000 -t skillradar-frontend:0.5.0 "$APP/frontend"
+  dock build -t skillradar-backend:0.5.2 "$APP/backend"
+  dock build --build-arg BACKEND_URL=http://backend:8000 -t skillradar-frontend:0.5.2 "$APP/frontend"
   dock rm -f skillradar-backend skillradar-frontend >/dev/null 2>&1 || true
   dock run -d --name skillradar-backend --restart unless-stopped \
     --network skillradar --network-alias backend \
     --memory 512m \
     -p "${BACKEND_PORT}:8000" \
     -v "$DATA:/data" \
-    -e APP_VERSION=0.5.0 \
+    -e APP_VERSION=0.5.2 \
     -e DATABASE_URL=sqlite:////data/skillradar.db \
     -e SECRET_KEY="$SECRET_KEY" \
     -e NEO4J_URI= \
@@ -68,7 +68,7 @@ else
     -e CLONE_DIR=/data/clones \
     -e OBJECT_DIR=/data/objects \
     -e PYTHONPATH=/app \
-    skillradar-backend:0.5.0
+    skillradar-backend:0.5.2
   for _ in $(seq 1 40); do
     if curl -fsS http://127.0.0.1:${BACKEND_PORT}/api/v1/health >/dev/null 2>&1; then
       break
@@ -80,7 +80,7 @@ else
     --memory 512m \
     -p "${HOST_PORT}:3000" \
     -e BACKEND_URL=http://backend:8000 \
-    skillradar-frontend:0.5.0; then
+    skillradar-frontend:0.5.2; then
     echo "ERROR: frontend 启动失败，inspect:" >&2
     dock inspect skillradar-frontend --format '{{.State.Error}}' >&2 || true
     exit 1

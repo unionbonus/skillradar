@@ -6,7 +6,7 @@ from pathlib import Path
 os.environ["SKILLRADAR_DISABLE_SCHEDULER"] = "1"
 os.environ["SECRET_KEY"] = "unit-test-secret-key-please-change"
 os.environ["ENCRYPTION_KEY"] = "unit-test-encryption-key"
-os.environ["APP_VERSION"] = "0.5.0"
+os.environ["APP_VERSION"] = "0.5.2"
 os.environ["RATE_LIMIT_PER_MINUTE"] = "1000"
 os.environ["DATABASE_URL"] = "sqlite:///" + str(Path(__file__).resolve().parent / "_test.db")
 os.environ["CLONE_DIR"] = str(Path(__file__).resolve().parent / "_clones")
@@ -34,7 +34,11 @@ def _reset_db():
     reset_graph_store()
     reset_vector_store()
     reset_object_store()
+    from app.channels.live import reset_live_state
+
+    reset_live_state()
     yield
     reset_graph_store()
     reset_vector_store()
     reset_object_store()
+    reset_live_state()

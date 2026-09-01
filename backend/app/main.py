@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import auth, configs, health, repos, reports, scan, search, subscriptions
+from app.api import auth, channel_live, configs, health, repos, reports, scan, search, subscriptions
 from app.config import get_settings
 from app.db import init_db
 
@@ -34,7 +34,7 @@ def create_app() -> FastAPI:
 
     @app.middleware("http")
     async def rate_limit(request: Request, call_next):
-        if request.url.path.endswith("/health"):
+        if request.url.path.endswith("/health") or "/channels/live" in request.url.path or "/channels/bind/" in request.url.path:
             return await call_next(request)
         ip = request.client.host if request.client else "unknown"
         now = time.time()
@@ -66,6 +66,7 @@ def create_app() -> FastAPI:
     app.include_router(search.router)
     app.include_router(reports.router)
     app.include_router(configs.router)
+    app.include_router(channel_live.router)
 
     @app.on_event("startup")
     def _start_scheduler() -> None:

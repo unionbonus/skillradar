@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Shell } from '@/components/Shell';
 import { desktop } from '@/lib/desktop';
-import { api } from '@/lib/api';
+import { ChannelLinkPanel } from '@/components/ChannelLink';
 
 type Health = {
   status?: string;
@@ -88,7 +88,10 @@ export default function SettingsPage() {
         />
       )}
       {tab === 'channels' && (
-        <ChannelPanel items={channels} onSaved={() => void load()} onMsg={setMsg} />
+        <div className="space-y-4">
+          <ChannelLinkPanel onMsg={setMsg} />
+          <ChannelPanel items={channels.filter((c) => c.channel_type === 'email')} onSaved={() => void load()} onMsg={setMsg} />
+        </div>
       )}
     </Shell>
   );
@@ -168,12 +171,11 @@ function ChannelPanel({
   onSaved: () => void;
   onMsg: (s: string) => void;
 }) {
-  const [ctype, setCtype] = useState<'feishu' | 'wecom' | 'email'>('feishu');
-  const [name, setName] = useState('飞书机器人');
-  const [webhook, setWebhook] = useState('');
+  const [name, setName] = useState('邮件通知');
   const [email, setEmail] = useState('');
   return (
     <div className="space-y-3">
+      <h2 className="text-sm font-semibold">邮件渠道</h2>
       <form
         className="card space-y-2 p-4"
         onSubmit={(e) => {
@@ -182,8 +184,7 @@ function ChannelPanel({
             method: 'POST',
             body: JSON.stringify({
               name,
-              channel_type: ctype,
-              webhook_url: webhook || undefined,
+              channel_type: 'email',
               email: email || undefined,
               is_default: true,
             }),
@@ -195,18 +196,9 @@ function ChannelPanel({
             .catch((ex) => onMsg(ex instanceof Error ? ex.message : '保存失败'));
         }}
       >
-        <select value={ctype} onChange={(e) => setCtype(e.target.value as typeof ctype)}>
-          <option value="feishu">飞书</option>
-          <option value="wecom">企业微信</option>
-          <option value="email">邮件</option>
-        </select>
         <label>名称<input value={name} onChange={(e) => setName(e.target.value)} /></label>
-        {ctype !== 'email' ? (
-          <label>Webhook<input value={webhook} onChange={(e) => setWebhook(e.target.value)} /></label>
-        ) : (
-          <label>收件人<input value={email} onChange={(e) => setEmail(e.target.value)} /></label>
-        )}
-        <button type="submit">保存渠道</button>
+        <label>收件人<input value={email} onChange={(e) => setEmail(e.target.value)} /></label>
+        <button type="submit">保存邮件渠道</button>
       </form>
       {items.map((it) => (
         <div key={it.id} className="card flex items-center justify-between p-3 text-sm">

@@ -1,4 +1,4 @@
-"""SkillRadar v0.5 application settings. Secrets never logged."""
+"""SkillRadar v0.5.2 application settings. Secrets never logged."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     )
 
     app_name: str = "SkillRadar"
-    app_version: str = "0.5.0"
+    app_version: str = "0.5.2"
     secret_key: str = Field(default="dev-only-change-me-please-use-32bytes")
     jwt_expire_minutes: int = 10080
     database_url: str = "sqlite:///./data/skillradar.db"
@@ -82,4 +82,4 @@ def get_settings() -> Settings:
 
 def reset_settings() -> None:
     get_settings.cache_clear()
-    os.environ.setdefault("APP_VERSION", "0.5.0")
+    os.environ.setdefault("APP_VERSION", "0.5.2")

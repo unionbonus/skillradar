@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'SkillRadar v0.5',
+  title: 'SkillRadar v0.5.2',
   description: 'AI 基础插件商业情报与市场调研平台',
 };
 

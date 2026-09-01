@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SkillRadar v0.5 — 双击启动 Electron。日志：/tmp/skillradar-start.log
+# SkillRadar v0.5.2 — 双击启动 Electron。日志：/tmp/skillradar-start.log
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -9,7 +9,7 @@ fi
 cd "$ROOT"
 
 LOG="${SKILLRADAR_START_LOG:-/tmp/skillradar-start.log}"
-export APP_VERSION="${APP_VERSION:-0.5.0}"
+export APP_VERSION="${APP_VERSION:-0.5.2}"
 export ELECTRON_MIRROR="${ELECTRON_MIRROR:-https://npmmirror.com/mirrors/electron/}"
 export ELECTRON_BUILDER_BINARIES_MIRROR="${ELECTRON_BUILDER_BINARIES_MIRROR:-https://npmmirror.com/mirrors/electron-builder-binaries/}"
 
@@ -79,7 +79,7 @@ set +u
 source "$ROOT/.env"
 set -u
 set +a
-export APP_VERSION=0.5.0
+export APP_VERSION=0.5.2
 export PYTHONPATH="$ROOT/backend"
 mkdir -p "$ROOT/backend/data" "$ROOT/data/clones"
 

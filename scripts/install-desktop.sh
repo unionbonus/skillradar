@@ -20,7 +20,7 @@ write_desktop() {
 Type=Application
 Version=1.0
 Name=SkillRadar 情报雷达
-Comment=SkillRadar v0.5 Electron 桌面应用
+Comment=SkillRadar v0.5.2 Electron 桌面应用
 Exec=/bin/bash "$ROOT/启动SkillRadar.sh"
 Path=$ROOT
 Terminal=false
