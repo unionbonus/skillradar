@@ -69,3 +69,35 @@ def test_legacy_sqlite_users_schema_can_register(tmp_path):
     finally:
         db.close()
         eng.dispose()
+
+
+def test_sanitize_blank_scan_task_user_id(tmp_path):
+    dbfile = tmp_path / "tasks.db"
+    conn = sqlite3.connect(dbfile)
+    conn.execute(
+        "CREATE TABLE scan_tasks (id TEXT PRIMARY KEY, user_id TEXT, kind TEXT NOT NULL, "
+        "query TEXT, status TEXT, error_message TEXT, result TEXT, created_at TEXT NOT NULL)"
+    )
+    conn.execute(
+        "INSERT INTO scan_tasks (id, user_id, kind, query, status, result, created_at) VALUES "
+        "('02095865-f4a5-44aa-96b5-ebe9c9bc6b0a', '', 'cron', 'x', 'success', '{}', '2020-01-01')"
+    )
+    conn.commit()
+    conn.close()
+    from sqlalchemy.orm import Session
+    from app.models import ScanTask
+
+    eng = create_engine(f"sqlite:///{dbfile}", connect_args={"check_same_thread": False})
+    Base.metadata.create_all(bind=eng)
+    from app.db import ensure_sqlite_columns, sanitize_legacy_sqlite
+
+    ensure_sqlite_columns(eng)
+    sanitize_legacy_sqlite(eng)
+    db = Session(eng)
+    try:
+        rows = list(db.scalars(select(ScanTask)).all())
+        assert rows
+        assert rows[0].user_id is None
+    finally:
+        db.close()
+        eng.dispose()

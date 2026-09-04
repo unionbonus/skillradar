@@ -203,6 +203,7 @@ class LlmConfig(Base):
     max_tokens: Mapped[int] = mapped_column(Integer, default=4096)
     is_default: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
 
 class ChannelConfig(Base):
@@ -215,3 +216,4 @@ class ChannelConfig(Base):
     config_encrypted: Mapped[str] = mapped_column(Text, default="")
     is_default: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

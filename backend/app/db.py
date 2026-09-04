@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from sqlalchemy import create_engine, inspect, text
+from sqlalchemy import Uuid, create_engine, inspect, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import get_settings
@@ -71,6 +71,34 @@ def ensure_sqlite_columns(bind=None) -> None:
                 conn.execute(text(ddl))
 
 
+def sanitize_legacy_sqlite(bind=None) -> None:
+    """Blank UUID strings and extra NOT NULL columns break SQLAlchemy on upgraded NAS DBs."""
+    bind = bind if bind is not None else engine
+    if bind is None or not str(bind.url).startswith("sqlite"):
+        return
+    inspector = inspect(bind)
+    tables = set(inspector.get_table_names())
+    with bind.begin() as conn:
+        for table in Base.metadata.sorted_tables:
+            if table.name not in tables:
+                continue
+            existing = {col["name"]: col for col in inspect(conn).get_columns(table.name)}
+            for col in table.columns:
+                if col.name not in existing:
+                    continue
+                if isinstance(col.type, Uuid):
+                    conn.execute(
+                        text(f'UPDATE "{table.name}" SET "{col.name}" = NULL WHERE TRIM(COALESCE("{col.name}", "")) = ""')
+                    )
+            mapped = {c.name for c in table.columns}
+            for name, meta in existing.items():
+                if name in mapped:
+                    continue
+                if not meta.get("nullable") and meta.get("default") is None:
+                    # extra legacy NOT NULL col (e.g. llm_configs.updated_at before it was mapped)
+                    conn.execute(text(f'UPDATE "{table.name}" SET "{name}" = CURRENT_TIMESTAMP WHERE "{name}" IS NULL'))
+
+
 def init_db() -> None:
     from app import models  # noqa: F401
     from app.scanner.keywords import seed_keywords
@@ -84,6 +112,7 @@ def init_db() -> None:
         if "already exists" not in str(exc):
             raise
     ensure_sqlite_columns()
+    sanitize_legacy_sqlite()
     db = SessionLocal()
     try:
         seed_keywords(db)
