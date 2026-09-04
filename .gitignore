@@ -23,6 +23,7 @@ frontend/out/
 frontend/release/
 *.sqlite
 *.db
+*.db-journal
 .coverage
 backend/_clones/
 backend/_objects/

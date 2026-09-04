@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { api } from '@/lib/api';
+import { api, readToken } from '@/lib/api';
 
 export type ChannelLive = {
   type: 'feishu' | 'wecom';
@@ -25,10 +25,10 @@ const BRAND: Record<string, { src: string; ring: string }> = {
 };
 
 function token() {
-  return typeof window !== 'undefined' ? localStorage.getItem('sr_token') || '' : '';
+  return readToken();
 }
 
-export function ChannelLinkPanel({ onMsg }: { onMsg: (s: string) => void }) {
+export function ChannelLinkPanel({ onMsg, active = 'feishu' }: { onMsg: (s: string) => void; active?: 'feishu' | 'wecom' }) {
   const [snap, setSnap] = useState<LiveSnap | null>(null);
   const [err, setErr] = useState('');
 
@@ -79,22 +79,20 @@ export function ChannelLinkPanel({ onMsg }: { onMsg: (s: string) => void }) {
 
   const feishu = snap?.channels?.feishu;
   const wecom = snap?.channels?.wecom;
+  const current = active === 'wecom' ? wecom : feishu;
 
   return (
     <div className="space-y-3">
       <p className="text-xs text-muted">
-        飞书 / 企业微信未连接时请用客户端扫码。连接成功后显示头像与在线绿钩，默认保持长连接。
+        未连接时请用对应客户端扫描二维码。连接成功后显示头像，右下角绿钩表示在线，默认保持长连接。
       </p>
       {err && <p className="text-sm text-danger">{err}</p>}
-      <div className="grid gap-3 sm:grid-cols-2">
-        <ChannelCard
-          item={feishu}
-          fallbackType="feishu"
-          onMsg={onMsg}
-          onSnap={apply}
-        />
-        <ChannelCard item={wecom} fallbackType="wecom" onMsg={onMsg} onSnap={apply} />
-      </div>
+      <ChannelCard
+        item={current}
+        fallbackType={active}
+        onMsg={onMsg}
+        onSnap={apply}
+      />
     </div>
   );
 }

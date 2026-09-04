@@ -111,6 +111,24 @@ def test_search_report_config_and_deep_dive():
         assert llms.json()["data"]["items"]
 
 
+def test_llm_auth_accepts_proxy_header_and_cookie():
+    with _client() as c:
+        headers = _auth(c)
+        token = headers["Authorization"].split(" ", 1)[1]
+        saved = c.post(
+            "/api/v1/configs/llm",
+            json={"name": "via-header", "provider": "openai", "model_name": "gpt-4o", "is_default": True},
+            headers={"X-SkillRadar-Token": token},
+        )
+        assert saved.status_code == 200, saved.text
+        listed = c.get("/api/v1/configs/llm", cookies={"sr_token": token})
+        assert listed.status_code == 200, listed.text
+        assert listed.json()["data"]["items"]
+        bare = c.get("/api/v1/configs/llm")
+        assert bare.status_code == 401
+        assert "missing bearer token" in bare.text
+
+
 def test_npm_adapter_and_upsert(monkeypatch):
     from app.db import SessionLocal
     from app.models import Repository

@@ -73,3 +73,4 @@ def test_channel_websocket_keep_alive():
             assert "channels" in msg
             assert msg["channels"]["feishu"]["keep_alive"] is True
             assert msg["channels"]["wecom"]["keep_alive"] is True
+            ws.close()

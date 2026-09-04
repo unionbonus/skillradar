@@ -201,13 +201,30 @@ async def live_ws(ws: WebSocket, token: str = "") -> None:
     chlive.attach(user.id)
     ev = chlive.subscribe(user.id)
     try:
+        await ws.send_json(chlive.snapshot(user.id))
         while True:
-            await ws.send_json(chlive.snapshot(user.id))
-            ev.clear()
-            try:
-                await asyncio.wait_for(ev.wait(), timeout=15)
-            except TimeoutError:
+            recv = asyncio.create_task(ws.receive_text())
+            wait = asyncio.create_task(ev.wait())
+            done, pending = await asyncio.wait({recv, wait}, timeout=15, return_when=asyncio.FIRST_COMPLETED)
+            for task in pending:
+                task.cancel()
+                try:
+                    await task
+                except (asyncio.CancelledError, WebSocketDisconnect, Exception):
+                    pass
+            if not done:
                 await ws.send_json({"type": "ping", **chlive.snapshot(user.id)})
+                continue
+            if recv in done:
+                try:
+                    recv.result()
+                except WebSocketDisconnect:
+                    break
+                except Exception:
+                    break
+            if wait in done:
+                ev.clear()
+                await ws.send_json(chlive.snapshot(user.id))
     except WebSocketDisconnect:
         pass
     finally:

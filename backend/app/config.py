@@ -57,10 +57,11 @@ class Settings(BaseSettings):
 
     def data_dir(self) -> Path:
         url = self.database_url
-        if url.startswith("sqlite"):
+        if url.startswith("sqlite") and ":memory:" not in url and url not in {"sqlite://", "sqlite:///:memory:"}:
             path = url.split("///")[-1]
             parent = Path(path).parent
-            parent.mkdir(parents=True, exist_ok=True)
+            if str(parent) not in {".", ""}:
+                parent.mkdir(parents=True, exist_ok=True)
         Path(self.clone_dir).mkdir(parents=True, exist_ok=True)
         root = object_dir_path(self)
         root.mkdir(parents=True, exist_ok=True)

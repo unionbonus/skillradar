@@ -16,17 +16,19 @@ SessionLocal = None
 
 def configure_engine() -> None:
     global engine, SessionLocal
+    from sqlalchemy.pool import StaticPool
+
     settings = get_settings()
     settings.data_dir()
     connect_args = {}
-    if settings.database_url.startswith("sqlite"):
+    engine_kwargs: dict = {"future": True, "pool_pre_ping": True}
+    url = settings.database_url
+    if url.startswith("sqlite"):
         connect_args = {"check_same_thread": False}
-    engine = create_engine(
-        settings.database_url,
-        connect_args=connect_args,
-        future=True,
-        pool_pre_ping=True,
-    )
+        if ":memory:" in url or url.rstrip("/") == "sqlite:":
+            engine_kwargs["poolclass"] = StaticPool
+            engine_kwargs["pool_pre_ping"] = False
+    engine = create_engine(url, connect_args=connect_args, **engine_kwargs)
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
 
 

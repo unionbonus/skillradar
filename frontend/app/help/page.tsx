@@ -18,7 +18,7 @@ export default function HelpPage() {
         </li>
         <li>点亮的 PPI 接触点进入详情：架构图、深度分析、动机、市场调研，再生成商业拆解报告。</li>
         <li>报告库可全文/语义检索；订阅页配置飞书 / 企微 / 邮件。</li>
-        <li>设置页扫码绑定飞书/企微（头像绿钩 = 已连接，默认长连接），大模型密钥 AES-256-GCM 加密。</li>
+        <li>设置页渠道为飞书 / 企业微信 / 邮件标签。扫码绑定后头像右下角绿钩表示在线；大模型与渠道需先登录。</li>
       </ol>
       <div className="flex flex-wrap gap-2">
         <Link href="/radar">

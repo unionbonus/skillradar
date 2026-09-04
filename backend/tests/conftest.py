@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
 os.environ["SKILLRADAR_DISABLE_SCHEDULER"] = "1"
 os.environ["SECRET_KEY"] = "unit-test-secret-key-please-change"
 os.environ["ENCRYPTION_KEY"] = "unit-test-encryption-key"
 os.environ["APP_VERSION"] = "0.5.2"
 os.environ["RATE_LIMIT_PER_MINUTE"] = "1000"
-os.environ["DATABASE_URL"] = "sqlite:///" + str(Path(__file__).resolve().parent / "_test.db")
-os.environ["CLONE_DIR"] = str(Path(__file__).resolve().parent / "_clones")
-os.environ["OBJECT_DIR"] = str(Path(__file__).resolve().parent / "_objects")
-os.environ["VECTOR_STORE_PATH"] = str(Path(__file__).resolve().parent / "_vectors.json")
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+os.environ["CLONE_DIR"] = "/dev/shm/skillradar-pytest-clones"
+os.environ["OBJECT_DIR"] = "/dev/shm/skillradar-pytest-objects"
+os.environ["VECTOR_STORE_PATH"] = ""
 
 from app.config import reset_settings
 from app.db import Base, configure_engine, engine, init_db

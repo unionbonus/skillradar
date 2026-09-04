@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Shell } from '@/components/Shell';
 import { desktop } from '@/lib/desktop';
-import { api } from '@/lib/api';
+import { api, readToken } from '@/lib/api';
 import { ChannelLinkPanel } from '@/components/ChannelLink';
 
 type Health = {
@@ -27,6 +28,7 @@ type Channel = { id: string; name: string; channel_type: string; is_default: boo
 
 export default function SettingsPage() {
   const [tab, setTab] = useState<'status' | 'llm' | 'channels'>('status');
+  const [channelTab, setChannelTab] = useState<'feishu' | 'wecom' | 'email'>('feishu');
   const [health, setHealth] = useState<Health | null>(null);
   const [llms, setLlms] = useState<Llm[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -35,15 +37,20 @@ export default function SettingsPage() {
   const desk = desktop();
 
   const load = async () => {
-    const h = await fetch('/api/v1/health').then((r) => r.json());
+    const h = await fetch('/api/v1/health', { credentials: 'include' }).then((r) => r.json());
     setHealth(h);
+    if (!readToken()) {
+      setErr('请先登录后再配置大模型与渠道');
+      return;
+    }
     try {
       const l = await api<{ items: Llm[] }>('/api/v1/configs/llm');
       setLlms(l.data.items || []);
       const c = await api<{ items: Channel[] }>('/api/v1/configs/channels');
       setChannels(c.data.items || []);
-    } catch {
-      /* not logged in */
+      setErr('');
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : '加载配置失败');
     }
   };
 
@@ -65,7 +72,17 @@ export default function SettingsPage() {
           渠道
         </button>
       </div>
-      {err && <p className="mb-3 text-sm text-danger">{err}</p>}
+      {err && (
+        <p className="mb-3 text-sm text-danger">
+          {err}
+          {err.includes('登录') ? (
+            <>
+              {' '}
+              <Link href="/login">去登录</Link>
+            </>
+          ) : null}
+        </p>
+      )}
       {msg && <p className="mb-3 text-sm text-accent">{msg}</p>}
       {tab === 'status' && (
         <div>
@@ -90,8 +107,22 @@ export default function SettingsPage() {
       )}
       {tab === 'channels' && (
         <div className="space-y-4">
-          <ChannelLinkPanel onMsg={setMsg} />
-          <ChannelPanel items={channels.filter((c) => c.channel_type === 'email')} onSaved={() => void load()} onMsg={setMsg} />
+          <div className="flex gap-2">
+            <button className={channelTab === 'feishu' ? '' : 'ghost'} onClick={() => setChannelTab('feishu')}>
+              飞书
+            </button>
+            <button className={channelTab === 'wecom' ? '' : 'ghost'} onClick={() => setChannelTab('wecom')}>
+              企业微信
+            </button>
+            <button className={channelTab === 'email' ? '' : 'ghost'} onClick={() => setChannelTab('email')}>
+              邮件
+            </button>
+          </div>
+          {channelTab === 'email' ? (
+            <ChannelPanel items={channels.filter((c) => c.channel_type === 'email')} onSaved={() => void load()} onMsg={setMsg} />
+          ) : (
+            <ChannelLinkPanel onMsg={setMsg} active={channelTab} />
+          )}
         </div>
       )}
     </Shell>
@@ -113,12 +144,18 @@ function LlmPanel({ items, onSaved, onMsg }: { items: Llm[]; onSaved: () => void
   const [model, setModel] = useState('gpt-4o');
   const [base, setBase] = useState('https://api.openai.com/v1');
   const [key, setKey] = useState('');
+  const requireAuth = () => {
+    if (readToken()) return true;
+    onMsg('请先登录后再配置或测试大模型');
+    return false;
+  };
   return (
     <div className="space-y-3">
       <form
         className="card space-y-2 p-4"
         onSubmit={(e) => {
           e.preventDefault();
+          if (!requireAuth()) return;
           void api('/api/v1/configs/llm', {
             method: 'POST',
             body: JSON.stringify({ name, provider: 'openai', model_name: model, base_url: base, api_key: key, is_default: true }),
@@ -149,11 +186,12 @@ function LlmPanel({ items, onSaved, onMsg }: { items: Llm[]; onSaved: () => void
           </div>
           <button
             className="ghost text-xs"
-            onClick={() =>
-              void api(`/api/v1/configs/llm/${it.id}/test`, { method: 'POST' })
+            onClick={() => {
+              if (!requireAuth()) return;
+              void api(`/api/v1/configs/llm/${it.id}/test`, { method: 'POST', body: '{}' })
                 .then((r: any) => onMsg(r.data?.ok ? '连接成功' : r.data?.message || r.message))
-                .catch((ex) => onMsg(ex instanceof Error ? ex.message : '测试失败'))
-            }
+                .catch((ex) => onMsg(ex instanceof Error ? ex.message : '测试失败'));
+            }}
           >
             测试连接
           </button>
