@@ -4,13 +4,13 @@
 
 services:
   backend:
-    image: skillradar-backend:0.5.2
+    image: skillradar-backend:0.5.3
     build: ./backend
     container_name: skillradar-backend
     restart: unless-stopped
     mem_limit: 512m
     environment:
-      APP_VERSION: "0.5.2"
+      APP_VERSION: "0.5.3"
       DATABASE_URL: sqlite:////data/skillradar.db
       SECRET_KEY: ${SECRET_KEY:-change-me-to-a-32-byte-or-longer-random-string}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
@@ -37,7 +37,7 @@ services:
           - backend
 
   frontend:
-    image: skillradar-frontend:0.5.2
+    image: skillradar-frontend:0.5.3
     build:
       context: ./frontend
       args:

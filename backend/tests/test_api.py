@@ -25,7 +25,7 @@ def test_health_register_decompose_subscription(monkeypatch):
         assert health.status_code == 200
         body = health.json()
         assert body["status"] == "ok"
-        assert body["version"] == "0.5.2"
+        assert body["version"] == "0.5.3"
 
         reg = c.post("/api/v1/auth/register", json={"email": "pm@example.com", "password": "password1"})
         assert reg.status_code == 200, reg.text

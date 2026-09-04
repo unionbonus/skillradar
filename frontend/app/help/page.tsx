@@ -8,7 +8,7 @@ export default function HelpPage() {
   const desk = desktop();
   return (
     <Shell>
-      <h1 className="mb-2 text-[20px] font-semibold">SkillRadar v0.5.2 使用手册</h1>
+      <h1 className="mb-2 text-[20px] font-semibold">SkillRadar v0.5.3 使用手册</h1>
       <p className="mb-6 max-w-2xl text-sm text-muted">
         AI 基础插件商业情报平台：多渠道扫描、技术深度拆解、市场调研、商业报告库、飞书/企微/邮件订阅。桌面窗口菜单可跳转雷达 / 订阅 / 设置。
       </p>

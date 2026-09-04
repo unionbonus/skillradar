@@ -53,6 +53,8 @@ async function proxy(req: NextRequest, ctx: { params: { path: string[] } | Promi
   const init: RequestInit = { method: req.method, headers, redirect: 'manual' };
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     init.body = await req.arrayBuffer();
+    // Node fetch requires duplex when a body is present on some runtimes.
+    (init as RequestInit & { duplex?: string }).duplex = 'half';
   }
   const upstream = await fetch(target, init);
   const out = new Headers();

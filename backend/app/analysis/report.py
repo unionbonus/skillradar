@@ -41,7 +41,7 @@ def render_business_report(
     mermaid = (deep_dive.get("call_flow") or {}).get("mermaid") or "graph TD; A[Plugin] --> B[Runtime]"
     return f"""# 商业拆解报告 · {name}
 
-> SkillRadar v0.5.2 自动生成，可在报告库中编辑后导出。
+> SkillRadar v0.5.3 自动生成，可在报告库中编辑后导出。
 
 ## 1. 执行摘要
 {summary}

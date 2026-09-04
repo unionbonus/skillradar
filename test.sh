@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SkillRadar v0.5.2 sandbox: unit+coverage then health 200 + API Pass
+# SkillRadar v0.5.3 sandbox: unit+coverage then health 200 + API Pass
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT/backend"
@@ -9,7 +9,7 @@ PORT="${PORT:-18001}"
 export SKILLRADAR_DISABLE_SCHEDULER=1
 export SECRET_KEY="${SECRET_KEY:-test-secret-key-please-change-32b}"
 export ENCRYPTION_KEY="${ENCRYPTION_KEY:-test-encryption-key}"
-export APP_VERSION="${APP_VERSION:-0.5.2}"
+export APP_VERSION="${APP_VERSION:-0.5.3}"
 export DATABASE_URL="${DATABASE_URL:-sqlite:////dev/shm/skillradar-sandbox.db}"
 export CLONE_DIR="${CLONE_DIR:-/dev/shm/skillradar-sandbox-clones}"
 export OBJECT_DIR="${OBJECT_DIR:-/dev/shm/skillradar-sandbox-objects}"
@@ -51,7 +51,7 @@ if [[ "$code" != "200" ]]; then
   exit 1
 fi
 grep -q '"status":"ok"' /tmp/sr-health.json
-grep -q '0.5.2' /tmp/sr-health.json
+grep -q '0.5.3' /tmp/sr-health.json
 grep -q '"backend"' /tmp/sr-health.json
 
 reg=$(curl -sS -X POST "http://127.0.0.1:${PORT}/api/v1/auth/register" \
@@ -91,6 +91,6 @@ curl -sS -X POST "http://127.0.0.1:${PORT}/api/v1/reports/generate" \
 curl -fsS "http://127.0.0.1:${PORT}/api/v1/reports" -H "Authorization: Bearer $TOKEN" | grep -q 商业拆解
 
 test -f "$ROOT/frontend/electron/main.cjs"
-grep -q "0.5.2" "$ROOT/frontend/electron/main.cjs"
+grep -q "0.5.3" "$ROOT/frontend/electron/main.cjs"
 
 echo "PASS: health 200 OK + register + decompose + radar + search + report + electron main"

@@ -1,6 +1,6 @@
 # SkillRadar
 
-AI 基础插件 **商业情报与市场调研** 桌面应用（v0.5.2 / Electron）。多渠道扫描 GitHub / npm / PyPI / MCP Registry 等，深度拆解与市场调研后生成商业报告，支持报告库检索与飞书/企微/邮件订阅。
+AI 基础插件 **商业情报与市场调研** 桌面应用（v0.5.3 / Electron）。多渠道扫描 GitHub / npm / PyPI / MCP Registry 等，深度拆解与市场调研后生成商业报告，支持报告库检索与飞书/企微/邮件订阅。
 
 完整说明见 [用户手册.md](./用户手册.md)。
 
@@ -13,4 +13,4 @@ AI 基础插件 **商业情报与市场调研** 桌面应用（v0.5.2 / Electron
 docker compose up --build           # Postgres + Redis + Neo4j + Qdrant + MinIO
 ```
 
-健康检查：`GET /api/v1/health` → `"version":"0.5.2"`。
+健康检查：`GET /api/v1/health` → `"version":"0.5.3"`。

@@ -89,7 +89,7 @@ def render_prd(structure: dict[str, Any], motivation: dict[str, Any]) -> str:
 - 订阅简报送达成功率
 
 ---
-*由 SkillRadar v0.5.2 自动生成，可在工作台编辑后导出。*
+*由 SkillRadar v0.5.3 自动生成，可在工作台编辑后导出。*
 """
 
 

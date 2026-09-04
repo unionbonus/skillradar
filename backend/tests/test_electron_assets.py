@@ -12,7 +12,7 @@ def test_electron_desktop_assets_exist():
     pkg = ROOT / "frontend" / "package.json"
     assert main.is_file()
     text = main.read_text(encoding="utf-8")
-    assert "0.5.2" in text
+    assert "0.5.3" in text
     assert "BrowserWindow" in text
     assert preload.is_file()
     assert "contextBridge" in preload.read_text(encoding="utf-8")
@@ -21,5 +21,5 @@ def test_electron_desktop_assets_exist():
     assert '"electron"' in body
     assert '"main": "electron/main.cjs"' in body
     manual = ROOT / "用户手册.md"
-    assert "0.5.2" in manual.read_text(encoding="utf-8")
+    assert "0.5.3" in manual.read_text(encoding="utf-8")
     assert "Electron" in manual.read_text(encoding="utf-8")

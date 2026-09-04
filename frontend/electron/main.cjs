@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 
-const APP_VERSION = '0.5.2';
+const APP_VERSION = '0.5.3';
 const BACKEND_PORT = Number(process.env.SKILLRADAR_API_PORT || 8000);
 const FRONTEND_PORT = Number(process.env.SKILLRADAR_WEB_PORT || 3000);
 

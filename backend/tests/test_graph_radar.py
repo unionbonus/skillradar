@@ -315,7 +315,7 @@ def test_radar_keywords_api_and_watch_scan(monkeypatch):
         headers = _auth(c)
         health = c.get("/api/v1/health")
         assert health.status_code == 200
-        assert health.json()["version"] == "0.5.2"
+        assert health.json()["version"] == "0.5.3"
         assert health.json()["graph"]["backend"] in {"memory", "neo4j"}
 
         listed = c.get("/api/v1/scan/keywords", headers=headers)

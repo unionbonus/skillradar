@@ -19,7 +19,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen pb-20 md:pb-0">
       <header className="hidden items-center justify-between border-b border-line px-6 py-3 md:flex">
         <Link href="/" className="text-lg font-semibold text-accent">
-          SkillRadar <span className="text-xs opacity-70">v0.5.2</span>
+          SkillRadar <span className="text-xs opacity-70">v0.5.3</span>
         </Link>
         <nav className="flex items-center gap-4 text-sm">
           {NAV.map(([href, label]) => (
@@ -43,7 +43,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </header>
       <header className="flex items-center justify-between border-b border-line px-4 py-3 md:hidden">
         <Link href="/" className="text-base font-semibold text-accent">
-          SkillRadar <span className="text-xs opacity-70">v0.5.2</span>
+          SkillRadar <span className="text-xs opacity-70">v0.5.3</span>
         </Link>
         <Link href="/help" className="text-xs text-muted">
           手册

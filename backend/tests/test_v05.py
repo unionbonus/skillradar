@@ -36,7 +36,7 @@ def test_health_exposes_vector_and_objects():
         health = c.get("/api/v1/health")
         assert health.status_code == 200
         body = health.json()
-        assert body["version"] == "0.5.2"
+        assert body["version"] == "0.5.3"
         assert body["vector"]["backend"] in {"memory", "qdrant"}
         assert body["objects"]["backend"] in {"local", "minio"}
 
@@ -64,7 +64,7 @@ def test_search_report_config_and_deep_dive():
     with _client() as c:
         headers = _auth(c)
         health = c.get("/api/v1/health")
-        assert health.json()["version"] == "0.5.2"
+        assert health.json()["version"] == "0.5.3"
         dec = c.post(
             "/api/v1/plugins/decompose",
             json={"repo_url": "file://" + str(FIXTURE), "local_path": str(FIXTURE)},

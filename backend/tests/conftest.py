@@ -5,7 +5,7 @@ import os
 os.environ["SKILLRADAR_DISABLE_SCHEDULER"] = "1"
 os.environ["SECRET_KEY"] = "unit-test-secret-key-please-change"
 os.environ["ENCRYPTION_KEY"] = "unit-test-encryption-key"
-os.environ["APP_VERSION"] = "0.5.2"
+os.environ["APP_VERSION"] = "0.5.3"
 os.environ["RATE_LIMIT_PER_MINUTE"] = "1000"
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["CLONE_DIR"] = "/dev/shm/skillradar-pytest-clones"

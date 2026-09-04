@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import get_db
@@ -27,7 +28,11 @@ def register(body: RegisterIn, db: Session = Depends(get_db)) -> dict:
         db.commit()
         db.refresh(user)
     except ValueError as exc:
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="email already registered") from exc
     token = create_access_token(user.id, user.email)
     return envelope(TokenOut(access_token=token, user_id=user.id, email=user.email).model_dump(mode="json"))
 
